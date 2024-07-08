@@ -1,0 +1,46 @@
+.header{
+    height: 37vw;
+     /* margin:30px auto */
+    margin-top: 10px  ; 
+    margin-bottom: 20px;
+    margin-left: 30px;     
+    background: url('../../assets/frontend_assets/header_img.png') no-repeat;
+    background-size: contain;
+    position: relative;
+    border: 2px solid gray;
+    border-radius: 15px;
+}
+.header-contents
+{
+  
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 1.5vw;
+    max-width: 50%;
+    bottom: 10%;
+    left: 6vw;
+    animation: fadeIn 3s;
+}
+.header-contents h2
+{
+ font-weight: 500;
+ color: #ffffff;
+ font-size: max(4.5vw,22px);
+}
+.header-contents p
+{
+  color: white;
+  font-size: 1.2vw;
+}
+.header-contents button
+{
+ border: none;
+ color: #747474;
+ font-weight: 600;
+ padding: 1vw 2.3vw;
+ background-color: white;
+ font-size: max(1vw,13px);
+ border-radius: 50px;
+}
