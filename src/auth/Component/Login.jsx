@@ -1,6 +1,36 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserLogin } from "./authApi";
 const Login = () => {
+  const navigate = useNavigate();
+  const [formData,setFormData] = useState({
+    email:'',
+    password:"",
+ });
+ const handleSubmit = async(event) => {
+  event.preventDefault(); // Prevent default form submission
+
+ const response = await UserLogin(formData);
+
+
+ alert(response.message)
+ if(response.message === "Login successful" && response.token)
+  {
+    localStorage.setItem("token",response.token);
+    localStorage.setItem("cartCount",response.cartCount);
+    navigate("/")
+  }
+  setFormData({
+    email: '',
+    password: '',
+  });
+};
+const handleChange = (event) => {
+  setFormData({
+    ...formData,
+    [event.target.name]: event.target.value,
+  });
+};
   return (
     <div className="flex items-center justify-center h-screen w-full px-5 sm:px-0 ">
       <div className="flex bg-white rounded-lg shadow-lg border overflow-hidden max-w-sm lg:max-w-4xl w-full">
@@ -22,6 +52,9 @@ const Login = () => {
             <input
               className="text-gray-700 border border-gray-300 rounded py-2 px-4 block w-full focus:outline-2 focus:outline-blue-700"
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
           </div>
@@ -34,6 +67,10 @@ const Login = () => {
             <input
               className="text-gray-700 border border-gray-300 rounded py-2 px-4 block w-full focus:outline-2 focus:outline-blue-700"
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
             />
             <a
               href="#"
@@ -43,7 +80,7 @@ const Login = () => {
             </a>
           </div>
           <div className="mt-8">
-            <button className="bg-blue-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-blue-600">
+            <button className="bg-blue-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-blue-600" onClick={handleSubmit}>
               Login
             </button>
           </div>
@@ -52,30 +89,13 @@ const Login = () => {
             className=" flex items-center justify-center mt-4 text-white rounded-lg shadow-md hover:bg-gray-100"
           >
             <div className="flex px-5 justify-center w-full py-3">
-              <div className="min-w-[30px]">
-                <svg className="h-6 w-6" viewBox="0 0 40 40">
-                  <path
-                    d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
-                    fill="#FFC107"
-                  />
-                  <path
-                    d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z"
-                    fill="#FF3D00"
-                  />
-                  <path
-                    d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z"
-                    fill="#4CAF50"
-                  />
-                  <path
-                    d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.015 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
-                    fill="#1976D2"
-                  />
-                </svg>
-              </div>
               <div className="flex w-full justify-center">
-                <h1 className="whitespace-nowrap text-gray-600 font-bold">
-                  Sign in with Google
-                </h1>
+                <button type="button" class=" shadow-xl text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 me-2 mb-2">
+                 <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
+                 <path fill-rule="evenodd" d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z" clip-rule="evenodd"/>
+                 </svg>
+                 Sign in with Google
+                </button>
               </div>
             </div>
           </a>

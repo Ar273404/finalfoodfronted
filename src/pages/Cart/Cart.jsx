@@ -1,277 +1,232 @@
-import React, { useContext } from 'react'
+import React, {useState,useEffect } from 'react'
 import './Cart.css'
-import { StoreContext } from '../../Context/StoreContext'
+import axios from 'axios';
+import api_base_url from '../../Api_Base_Url/api_base_url';
 import { Link } from 'react-router-dom';
 const Cart = () => {
-  let sum=1;
-  const {cartItems,food_list} = useContext(StoreContext);
+  const [cartlist,setCartList] = useState([])
+    const fetchCartList = async ()=>{
+       const token = localStorage.getItem('token')
+        const response = await axios.get(api_base_url+"/cartitem",{
+        headers: {
+              Authorization: `Bearer ${token}`,
+            },
+    });
+        console.log(response.data);
+        setCartList(response.data);
+    }
+    useEffect(()=>{
+         async function loadData(){
+            await fetchCartList();
+         }
+        
+         loadData();
+    },[]);
+      const object = {};
+      cartlist.forEach(item => {
+      object[item.id] = item.value;
+  });
+
+   
+    //pay
+     var tax = 1;
+     var totaltax = tax*cartlist.length;
+     var savings = 5;
+     var totalsaving = savings*cartlist.length;
+     var storepickup = 8;
+     var subtotal = cartlist.reduce((acc,item)=>acc+item.price,0);
+     var total = totaltax+storepickup+subtotal-totalsaving;
+
+     console.log(subtotal);
+
+     //remove 
+     const handleRemoveItem = async(id)=>{
+  const token = localStorage.getItem('token');
+    const response = await axios.delete(`${api_base_url }/cartItemDelete/${id}`, {
+      headers: {
+              Authorization: `Bearer ${token}`,
+            }},);
+
+        setCartList(response.data.UserCartItem);
+           
+     };
+    //image open in new tab
+    const openImage = (url) => {
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Image Viewer</title>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+        </head>
+        <body class="flex flex-col items-center justify-center h-screen bg-gray-100">
+          <img src="${url}" alt="Opened Image" class="max-w-3/4 max-h-3/4 mb-8">
+          <a href="/" onclick="window.close()" class="text-blue-500 text-lg font-semibold hover:underline">Go Back to Home Page 🔙🔙🔙 </a>
+        </body>
+      </html>
+    `);
+  };
   return (
     <div>
-    <section class=" relative z-10 after:contents-[''] after:absolute after:z-0 after:h-full xl:after:w-1/3 after:top-0 after:right-0 after:bg-gray-50">
-        <div class="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto relative z-10">
-            <div class="grid grid-cols-12">
-                <div class="col-span-12 xl:col-span-8 lg:pr-8 pt-14 pb-8 lg:py-24 w-full max-xl:max-w-3xl max-xl:mx-auto">
-                    <div class="flex items-center justify-between pb-8 border-b border-gray-300">
-                        <h2 class="font-manrope font-bold text-3xl leading-10 text-black">Shopping Cart</h2>
-                        <h2 class="font-manrope font-bold text-xl leading-8 text-gray-600">3 Items</h2>
-                    </div>
-                    <div class="grid grid-cols-12 mt-8 max-md:hidden pb-6 border-b border-gray-200">
-                        <div class="col-span-12 md:col-span-7">
-                            <p class="font-normal text-lg leading-8 text-gray-400">Product Details</p>
-                        </div>
-                        <div class="col-span-12 md:col-span-5">
-                            <div class="grid grid-cols-5">
-                                <div class="col-span-3">
-                                    <p class="font-normal text-lg leading-8 text-gray-400 text-center">Quantity</p>
-                                </div>
-                                <div class="col-span-2">
-                                    <p class="font-normal text-lg leading-8 text-gray-400 text-center">Total</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {food_list.map((item)=>{
-          if(1)
-            {
-              return(
-                 <div class="flex flex-col min-[500px]:flex-row min-[500px]:items-center gap-5 py-6  border-b border-gray-200 group">
-                        <div class="w-full md:max-w-[110px] ">
-                            <img src={item.image} alt="perfume bottle image"
-                                class="mx-auto"/>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-4 w-full">
-                            <div class="md:col-span-2">
-                                <div class="flex flex-col max-[500px]:items-center gap-3">
-                                    <h6 class="font-semibold text-base leading-7 text-black">{item.name}</h6>
-                                    <h6 class="font-normal text-base leading-7 text-gray-500">{item.category}</h6>
-                                    <h6 class="font-medium text-base leading-7 text-gray-600 transition-all duration-300 group-hover:text-indigo-600">${item.price}</h6>
-                                </div>
-                            </div>
-                            <div class="flex items-center max-[500px]:justify-center h-full max-md:mt-3">
-                                <div class="flex items-center h-full">
-                                    <button
-                                        class="group rounded-l-xl px-5 py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus-within:outline-gray-300">
-                                        <svg class="stroke-gray-900 transition-all duration-500 group-hover:stroke-black"
-                                            xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                                            viewBox="0 0 22 22" fill="none">
-                                            <path d="M16.5 11H5.5" stroke="" stroke-width="1.6"
-                                                stroke-linecap="round" />
-                                            <path d="M16.5 11H5.5" stroke="" stroke-opacity="0.2" stroke-width="1.6"
-                                                stroke-linecap="round" />
-                                            <path d="M16.5 11H5.5" stroke="" stroke-opacity="0.2" stroke-width="1.6"
-                                                stroke-linecap="round" />
-                                        </svg>
-                                    </button>
-                                    <input type="text"
-                                        class="border-y border-gray-200 outline-none text-gray-900 font-semibold text-lg w-full max-w-[73px] min-w-[60px] placeholder:text-gray-900 py-[15px]  text-center bg-transparent"
-                                        placeholder="1"/>
-                                    <button
-                                        class="group rounded-r-xl px-5 py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus-within:outline-gray-300">
-                                        <svg class="stroke-gray-900 transition-all duration-500 group-hover:stroke-black"
-                                            xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                                            viewBox="0 0 22 22" fill="none">
-                                            <path d="M11 5.5V16.5M16.5 11H5.5" stroke="" stroke-width="1.6"
-                                                stroke-linecap="round" />
-                                            <path d="M11 5.5V16.5M16.5 11H5.5" stroke="" stroke-opacity="0.2"
-                                                stroke-width="1.6" stroke-linecap="round" />
-                                            <path d="M11 5.5V16.5M16.5 11H5.5" stroke="" stroke-opacity="0.2"
-                                                stroke-width="1.6" stroke-linecap="round" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex items-center max-[500px]:justify-center md:justify-end max-md:mt-3 h-full">
-                                <p class="font-bold text-lg leading-8 text-gray-600 text-center transition-all duration-300 group-hover:text-indigo-600">{item.price}</p>
-                            </div>
-                        </div>
-                    </div>
-              )
-            }
-        })}
-                </div>
-                <div
-                    class=" col-span-12 xl:col-span-4 bg-gray-50 w-full max-xl:px-6 max-w-3xl xl:max-w-lg mx-auto lg:pl-8 py-24">
-                    <h2 class="font-manrope font-bold text-3xl leading-10 text-black pb-8 border-b border-gray-300">
-                        Order Summary</h2>
-                    <div class="mt-8">
-                        <div class="flex items-center justify-between pb-6">
-                            <p class="font-normal text-lg leading-8 text-black">3 Items</p>
-                            <p class="font-medium text-lg leading-8 text-black"><span>&#8377;</span>480.00</p>
-                        </div>
-                        <form>
-                            <label class="flex  items-center mb-1.5 text-gray-600 text-sm font-medium">Shipping
-                            </label>
-                            <div class="flex pb-6">
-                                <div class="relative w-full">
-                                    <div class=" absolute left-0 top-0 py-3 px-4">
-                                        <span class="font-normal text-base text-gray-300">Second Delivery</span>
-                                    </div>
-                                    <input type="text"
-                                        class="block w-full h-11 pr-10 pl-36 min-[500px]:pl-52 py-2.5 text-base font-normal shadow-xs text-gray-900 bg-white border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-gray-400"
-                                        placeholder="$5.00"/>
-                                    <button id="dropdown-button" data-target="dropdown-delivery"
-                                        class="dropdown-toggle flex-shrink-0 z-10 inline-flex items-center py-4 px-4 text-base font-medium text-center text-gray-900 bg-transparent  absolute right-0 top-0 pl-2 "
-                                        type="button">
-                                        <svg class="ml-2 my-auto" width="12" height="7" viewBox="0 0 12 7"
-                                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M1 1.5L4.58578 5.08578C5.25245 5.75245 5.58579 6.08579 6 6.08579C6.41421 6.08579 6.74755 5.75245 7.41421 5.08579L11 1.5"
-                                                stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round"></path>
-                                        </svg>
-                                    </button>
-                                    <div id="dropdown-delivery" aria-labelledby="dropdown-delivery"
-                                        class="z-20 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute top-10 bg-white right-0">
-                                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
-                                            aria-labelledby="dropdown-button">
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Shopping</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Images</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">News</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Finance</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <label class="flex items-center mb-1.5 text-gray-400 text-sm font-medium">Promo Code
-                            </label>
-                            <div class="flex pb-4 w-full">
-                                <div class="relative w-full ">
-                                    <div class=" absolute left-0 top-0 py-2.5 px-4 text-gray-300">
-
-                                    </div>
-                                    <input type="text"
-                                        class="block w-full h-11 pr-11 pl-5 py-2.5 text-base font-normal shadow-xs text-gray-900 bg-white border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-gray-400 "
-                                        placeholder="xxxx xxxx xxxx"/>
-                                    <button id="dropdown-button" data-target="dropdown"
-                                        class="dropdown-toggle flex-shrink-0 z-10 inline-flex items-center py-4 px-4 text-base font-medium text-center text-gray-900 bg-transparent  absolute right-0 top-0 pl-2 "
-                                        type="button"><svg class="ml-2 my-auto" width="12" height="7" viewBox="0 0 12 7"
-                                            fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M1 1.5L4.58578 5.08578C5.25245 5.75245 5.58579 6.08579 6 6.08579C6.41421 6.08579 6.74755 5.75245 7.41421 5.08579L11 1.5"
-                                                stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round"></path>
-                                        </svg>
-                                    </button>
-                                    <div id="dropdown"
-                                        class="absolute top-10 right-0 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
-                                            aria-labelledby="dropdown-button">
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Shopping</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Images</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">News</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Finance</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center border-b border-gray-200">
-                                <button
-                                    class="rounded-lg w-full bg-black py-2.5 px-4 text-white text-sm font-semibold text-center mb-8 transition-all duration-500 hover:bg-black/80">Apply</button>
-                            </div>
-                            <div class="flex items-center justify-between py-8">
-                                <p class="font-medium text-xl leading-8 text-black">3 Items</p>
-                                <p class="font-semibold text-xl leading-8 text-indigo-600"><span>&#8377;</span>485.00</p>
-                            </div>
-                            <Link to='/pay'>
-                             <button
-                                class="w-full text-center bg-indigo-600 rounded-xl py-3 px-6 font-semibold text-lg text-white transition-all duration-500 hover:bg-indigo-700">Checkout
-                            </button>
-                            </Link>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-                                            
+<section class="bg-white py-2 antialiased dark:bg-gray-900 md:py-16">
+  <div className="flex flex-col items-center border-b bg-white mb-2 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
+    <Link to='/' className="text-2xl font-bold text-gray-800">
+      Back to Cart Page 🔙 🔙
+    </Link>
+    <div className="mt-1 mb-2 py-2 text-xs sm:mt-2 sm:ml-auto sm:text-base">
+      <div className="relative">
+        <ul className="relative flex w-full items-center justify-between space-x-2 sm:space-x-4">
+            <li className="flex items-center space-x-3 text-left sm:space-x-4">
+            <Link to='#' className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-600 text-xs font-semibold text-white ring ring-gray-600 ring-offset-2" href="#">1</Link>
+            <span className="font-semibold text-gray-900"> Cart Page</span>
+          </li>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          <li className="flex items-center space-x-3 text-left sm:space-x-4">
+            <Link to='#' className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-400 text-xs font-semibold text-white" href="#">2</Link>
+            <span className="font-semibold text-gray-500">Checkout</span>
+          </li>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          <li className="flex items-center space-x-3 text-left sm:space-x-4">
+            <Link to='#' className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-400 text-xs font-semibold text-white" href="#">3</Link>
+            <span className="font-semibold text-gray-500">Order Summary</span>
+          </li>
+        </ul>
+      </div>
     </div>
-    // <div className='cart'>
-    //   <div className='cart-items'>
-    //     <div className='cart-items-title'>
-    //       <p>Items</p>
-    //       <p>Title</p>
-    //       <p>Price</p>
-    //       <p>Quantity</p>
-    //       <p>Total</p>
-    //       <p>Remove</p>
-    //     </div>
-    //     <br/>
-    //     <hr/>
-    //     {/* {console.log(food_list)} */}
-    //     {food_list.map((item)=>{
-    //       if(1)
-    //         {
-    //           return(
-    //             <div>
-    //             <div className='cart-items-title cart-items-item'>
-    //               <img src={item.image} alt=''/>
-    //               <p>{item.name}</p>
-    //                <p>{item.price}</p>
-    //               <p>{sum}</p>
-    //               <p>{sum*item.price}</p>
-    //               <p className='cross'>X</p>
-    //              </div>
-    //              <hr/>
-    //             </div>
-    //           )
-    //         }
-    //     })}
-    //   </div>
-    //   <div className='cart-bottom'>
-    //     <div className='cart-total'>
-    //       <h2>Cart Totals</h2>
-    //       <div className='cart-total-details'>
-    //       <p>Subtotal</p>
-    //       <p>{0}</p>
-    //        </div>
-    //     <hr/>
-    //       <div className='cart-total-details'>
-    //       <p>Delivery Fee</p>
-    //       <p>{2}</p>
-    //        </div>
-    //       <div className='cart-total-details'>
-    //       <p>Total</p>
-    //       <p>{0}</p>
-    //         </div>
-    //     </div>
-    //     <button>Checkout</button>
-    //   </div>
-    //   <div className='cart-promrocode'>
-    //     <div>
-    //       <p>
-    //         If you have promocode ,Enter here 👉 
-    //         <div className='cart-promocode-input'>
-    //         <input type='text' aria-placeholder='Enter code'/>
-    //         </div>
-    //       </p>
-    //     </div>
-    //   </div>
-      
-    // </div>
+   </div>
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
+ 
+    <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8 ">
+      <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);">
+        <div class="space-y-6">
+          {cartlist.map((item) =>  (
+             <div key={item._id} class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+            <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+              <a href="#" class="shrink-0 md:order-1">
+                <img onClick={()=>openImage(api_base_url+"/images/"+item.image)} class=" rounded-lg shadow-lg h-50 w-40 bor dark:hidden" src={api_base_url+"/images/"+item.image} alt="imac image" />
+                <img  onClick={()=>openImage(api_base_url+"/images/"+item.image)} class=" rounded-lg shadow-lg hidden h-50 w-40 dark:block" src={api_base_url+"/images/"+item.image} alt="imac image" />
+              </a>      
+              <label for="counter-input" class="sr-only">Choose quantity:</label>
+              <div class="flex items-center justify-between md:order-3 md:justify-end">
+                <div class="flex items-center">
+                  <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                    <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                    </svg>
+                  </button>
+                  <input type="text" id="counter-input" data-input-counter class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white" placeholder="" value="2" required />
+                  <button type="button" id="increment-button" data-input-counter-increment="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                    <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="text-end md:order-4 md:w-32">
+                  <p class="text-base font-bold text-gray-900 dark:text-white">&#8377;{item.price}</p>
+                </div>
+              </div>
+
+              <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                <p href="#" class="text-base mb-2 font-bold text-gray-900  dark:text-white">{item.name}</p>
+                <p href="#" class="text-base font-medium text-gray-900  dark:text-white">{item.description}</p>
+
+                <div class="flex items-center gap-4">
+                  {/* `/pay?q=${JSON.stringify(item)}` */}
+                  {console.log((item))}
+                  <Link to={`/pay?q=${JSON.stringify(item)}`}>
+                   <button  type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                   <svg class="w-3.5 h-3.5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
+                   <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"/>
+                   </svg>
+                       Buy now
+                </button>
+                  </Link>
+                          {/* <Link to={`/pay?q=${JSON.stringify(cartlist)}&m="arun" ` */}
+
+                  <button onClick = {()=>handleRemoveItem (item._id)} type="button" class="cursor-pointer inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-900">
+                    <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                    </svg>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          ))
+        }
+        </div>
+        
+      </div>
+
+      <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
+        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</p>
+
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-base font-normal text-gray-500 dark:text-gray-400"> Total Original price</dt>
+                <dd class="text-base font-medium text-gray-900 dark:text-white">&#8377;{subtotal}</dd>
+              </dl>
+
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Savings</dt>
+                <dd class="text-base font-medium text-green-600">-&#8377;{totalsaving}</dd>
+              </dl>
+
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Store Pickup</dt>
+                <dd class="text-base font-medium text-gray-900 dark:text-white">&#8377;{storepickup}</dd>
+              </dl>
+
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Tax</dt>
+                <dd class="text-base font-medium text-gray-900 dark:text-white">&#8377;{totaltax}</dd>
+              </dl>
+            </div>
+
+            <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+              <dt class="text-base font-bold text-gray-900 dark:text-white">Total</dt>
+              <dd class="text-base font-bold text-gray-900 dark:text-white">&#8377;{total}</dd>
+            </dl>
+          </div>
+            
+           <Link to={`/pay?q=${JSON.stringify(cartlist)}&m="arun" `} class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+               Proceed to Checkout 👉👉👉
+           </Link>
+          <div class="flex items-center justify-center gap-2">
+            <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
+            <Link to='/' class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500">
+               Continue Shopping 🛍️🛍️
+              <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
+              </svg>
+            </Link>
+           
+          </div>
+        </div>
+
+        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+          <form class="space-y-4">
+            <div>
+              <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Do you have a voucher or gift card? </label>
+              <input type="text" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="" required />
+            </div>
+            <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Apply Code</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>                            
+    </div>
   
   )
 }

@@ -5,7 +5,7 @@ import App from './App';
 import {BrowserRouter, RouterProvider} from 'react-router-dom';
 import StoreContextProvider from './Context/StoreContext';
 import {Provider} from 'react-redux'
-import store from './Redux/Store';
+import { store } from './Redux/Store';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>

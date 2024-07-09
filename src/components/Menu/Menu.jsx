@@ -4,8 +4,7 @@ import {menu_list} from '../../assets/frontend_assets/asset';
 const Menu = ({category,setCategory}) => {
   return (
     <div className='explore-menu' id='explore-menu'>
-      <h1>Explore Our Menu Item</h1>
-      <p className='explore-menu-text'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut vitae suscipit vel. Aspernatur, doloribus rem.</p>
+      <h1>Explore Our Menu Item👉👉👉👉👉</h1>
       <div className='explore-menu-list'>
         {menu_list.map((item,index)=>{
             return(

@@ -4,17 +4,18 @@ import './Home.css'
 import Header from '../../components/Header/Header'
 import Menu from '../../components/Menu/Menu'
 import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
-import Footer from '../../components/Footer/Footer'
-import Navbar from '../../components/Navbar/Navbar'
+import { FinalHeader } from '../../components/Navbar/FinalHeader'
+import MainFooter from '../../components/Footer/MainFooter'
 const Home = () => {
   const [category,setCategory] = useState("All");
   return (
     <div>
-      <Navbar/>
+      <FinalHeader/>
       <Header/>
       <Menu category={category} setCategory={setCategory}/>
       <FoodDisplay category={category}/>
-      <Footer/>
+      {/* <Footer/> */}
+      <MainFooter/>
     </div>
   )
 }
