@@ -1,2 +1,3 @@
-const api_base_url = "https://foody-backend-xi.vercel.app";
+
+const api_base_url = process.env.url;
 export default api_base_url;
