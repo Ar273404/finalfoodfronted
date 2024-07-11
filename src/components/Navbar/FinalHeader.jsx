@@ -7,7 +7,7 @@ import { useState } from 'react';
 const navigation = [
   { name: 'Home', href: '/', current: false },
   { name: 'Contact', href: '/contact-us', current: false },
-  { name: 'Admin', href: '#', current: false },
+  { name: 'Admin', href: 'https://finalfoodadmin.vercel.app', current: false },
 ];
 
 function classNames(...classes) {
