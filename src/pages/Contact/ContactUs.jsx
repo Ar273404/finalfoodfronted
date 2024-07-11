@@ -184,7 +184,7 @@ const ContactUs = () => {
                             </div>
                         </div>
                         <div className="text-center">
-                            <button type="submit" className="w-full bg-blue-800 text-white px-6 py-3 font-xl rounded-md sm:mb-0">Send Message</button>
+                            <button onClick={handleSubmit} type="submit" className="w-full bg-blue-800 text-white px-6 py-3 font-xl rounded-md sm:mb-0">Send Message</button>
                         </div>
                     </form>
                 </div>
