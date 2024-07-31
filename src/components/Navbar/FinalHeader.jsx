@@ -3,11 +3,12 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { asset } from '../../assets/frontend_assets/asset';
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const navigation = [
-  { name: 'Home', href: '/', current: false },
-  { name: 'Contact', href: '/contact-us', current: false },
-  { name: 'Admin', href: 'https://finalfoodadmin.vercel.app', current: false },
+  { name: "Home", href: "/", current: false },
+  { name: "Contact", href: "/contact-us", current: false },
+  { name: "Admin", href: "https://localhost:8080", current: false },
 ];
 
 function classNames(...classes) {
@@ -18,6 +19,7 @@ export const FinalHeader = () => {
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+ const CartItemCount = useSelector(state => state.CartItemCount.count);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -80,7 +82,7 @@ export const FinalHeader = () => {
                 <Link to="/cart" className="mr-3 relative rounded-full p-1 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <img src={asset.basket_icon} alt="Cart" className="w-9 h-9" />
                   <div className="absolute top-0 right-0 transform translate-x-2/3 -translate-y-2/3 bg-gray-800 rounded-full w-5 h-5 flex items-center justify-center text-white">
-                    <span className="text-xs">{localStorage.getItem('cartCount')}</span>
+                    <span className="text-xs">{CartItemCount}</span>
                   </div>
                 </Link>
 
