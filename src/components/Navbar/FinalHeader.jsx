@@ -8,7 +8,11 @@ import { useSelector } from 'react-redux';
 const navigation = [
   { name: "Home", href: "/", current: false },
   { name: "Contact", href: "/contact-us", current: false },
-  { name: "Admin", href: "https://localhost:8080", current: false },
+  {
+    name: "Admin",
+    href: "https://finalfoodadmin.onrender.com",
+    current: false,
+  },
 ];
 
 function classNames(...classes) {
